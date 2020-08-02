@@ -1,1 +1,1 @@
-리드미테스트
+add server folder 

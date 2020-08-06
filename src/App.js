@@ -49,7 +49,14 @@ class App extends Component {
   }
   onSubmit(e) {
     e.preventDefault();
-    console.log(`The values are ${this.state.person_name}, ${this.state.title}, and ${this.state.description}`)
+    const obj = {
+      person_name: this.state.person_name,
+      title: this.state.title,
+      description: this.state.description
+    };
+
+    axios.post('http://localhost:4000/니가한API',obj).then(res=>console.log(res.data))
+
     this.setState({
       person_name: '',
       title: '',

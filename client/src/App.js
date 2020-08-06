@@ -29,7 +29,6 @@ class App extends Component {
   }
   _getHost = async() => {
     const res = await axios.get('/api/host');
-    console.log(res)
     this.setState({ host : res.data.host })
   }
 
@@ -51,12 +50,12 @@ class App extends Component {
   onSubmit(e) {
     e.preventDefault();
     const obj = {
-      person_name: this.state.person_name,
+      name: this.state.person_name,
       title: this.state.title,
-      description: this.state.description
+      content: this.state.description
     };
 
-    axios.post('http://localhost:4000/니가한API',obj).then(res=>console.log(res.data))
+    axios.post('http://localhost:4000/posts/api',obj).then(res=>console.log(res.data))
 
     this.setState({
       person_name: '',

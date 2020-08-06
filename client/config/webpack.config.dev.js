@@ -139,7 +139,12 @@ module.exports = {
         port: 4000, // 혹은 자신이 설정한 포트번호
         open: true,
         proxy: {
-            "/": "http://localhost"
+            "/": "http://localhost",
+            "/api" :{
+                target: 'https://api.evan.com',
+                changeOrigin: true,
+                pathRewrite: {'^/api':''},
+            }
         }
     },
 

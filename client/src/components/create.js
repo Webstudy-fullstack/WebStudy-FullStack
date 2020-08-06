@@ -37,7 +37,9 @@ export default class Create extends Component {
           title: this.state.business_name,
           content: this.state.business_gst_number
         };
-        axios.post('http://localhost:4000/posts/api', obj)
+        axios.post('http://localhost:4000/posts/api', JSON.stringify(obj), {
+            headers: { "Content-Type": `application/json`}
+            })
             .then(res => console.log(res.data));
         
         this.setState({

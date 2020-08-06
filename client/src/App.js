@@ -16,6 +16,7 @@ class App extends Component {
 
   _getHost = async() => {
     const res = await axios.get('/api/host');
+    console.log(res)
     this.setState({ host : res.data.host })
   }
 

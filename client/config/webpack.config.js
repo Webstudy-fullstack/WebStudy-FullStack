@@ -511,14 +511,6 @@ module.exports = function(webpackEnv) {
       ],
     },
 
-    devServer: {
-      port: 3000, // 혹은 자신이 설정한 포트번호
-      open: true,
-      proxy: {
-          "/": "http://localhost"
-      }
-  },
-
     plugins: [
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(

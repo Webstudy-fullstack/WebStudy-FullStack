@@ -25,7 +25,13 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/posts',postsRouter);
 app.use(cors());
-
+app.options('/write', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 
+  'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.send();
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -37,8 +43,6 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
   // render the error page
   res.status(err.status || 500);
   res.render('error');

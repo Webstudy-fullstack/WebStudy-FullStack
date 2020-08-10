@@ -31,6 +31,10 @@ const post = {
 
         try {
             const result = await pool.queryParam(query);
+            if(result.length===0)
+            {
+                return NULL_VALUE
+            }
             return result;
         } catch (err) {
             if (err.errno == 1062) {

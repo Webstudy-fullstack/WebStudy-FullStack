@@ -1,101 +1,98 @@
-import React, { Component } from 'react';
-import './App.css';
-import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import React, { Component } from "react";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import axios from "axios";
 
-import Create from './components/create';
-import Edit from './components/edit';
-import Index from './components/index';
+import Home from "./Home";
+import Dashboard from "./Dashboard";
 
+export default class App extends Component {
+  constructor() {
+    super();
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.onChangePersonName = this.onChangePersonName.bind(this);
-    this.onChangeBusinessName = this.onChangeBusinessName.bind(this);
-    this.onChangeGstNumber = this.onChangeGstNumber.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
     this.state = {
-      host : '',
-      person_name: '',
-      title: '',
-      description:''
-    }
+      loggedInStatus: "NOT_LOGGED_IN",
+      user: {}
+    };
+
+    this.handleLogin = this.handleLogin.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
+  }
+
+  checkLoginStatus() {
+    axios
+      .get("http://localhost:3001/logged_in", { withCredentials: true })
+      .then(response => {
+        if (
+          response.data.logged_in &&
+          this.state.loggedInStatus === "NOT_LOGGED_IN"
+        ) {
+          this.setState({
+            loggedInStatus: "LOGGED_IN",
+            user: response.data.user
+          });
+        } else if (
+          !response.data.logged_in &
+          (this.state.loggedInStatus === "LOGGED_IN")
+        ) {
+          this.setState({
+            loggedInStatus: "NOT_LOGGED_IN",
+            user: {}
+          });
+        }
+      })
+      .catch(error => {
+        console.log("check login error", error);
+      });
   }
 
   componentDidMount() {
-    this._getHost();
-  }
-  _getHost = async() => {
-    const res = await axios.get('/api/host');
-    this.setState({ host : res.data.host })
+    this.checkLoginStatus();
   }
 
-  onChangePersonName(e) {
+  handleLogout() {
     this.setState({
-      person_name: e.target.value
+      loggedInStatus: "NOT_LOGGED_IN",
+      user: {}
     });
   }
-  onChangeBusinessName(e) {
+
+  handleLogin(data) {
     this.setState({
-      title: e.target.value
-    })  
+      loggedInStatus: "LOGGED_IN",
+      user: data.user
+    });
   }
-  onChangeGstNumber(e) {
-    this.setState({
-      description: e.target.value
-    })
-  }
-  onSubmit(e) {
-    e.preventDefault();
-    const obj = {
-      name: this.state.person_name,
-      title: this.state.title,
-      content: this.state.description
-    };
-
-    axios.post('http://localhost:4000/posts/api',obj).then(res=>console.log(res.data))
-
-    this.setState({
-      person_name: '',
-      title: '',
-      description: ''
-    })
-  }
-
-
 
   render() {
-    return(
-        <Router>
-                  <h3> Welcome to <u> {this.state.host} </u> Webstudy {this.title}</h3>
-        <div className="container">
-          <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <Link to={'/'} className="navbar-brand">WEB-STUDY</Link>
-            <div className="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul className="navbar-nav mr-auto">
-              <li className="nav-item">
-                  <Link to={'/'} className="nav-link">Home</Link>
-                </li>
-                <li className="nav-item">
-                  <Link to={'/create'} className="nav-link">Create</Link>
-                </li>
-                <li className="nav-item">
-                  <Link to={'/index'} className="nav-link">Index</Link>
-                </li>
-              </ul>
-            </div>
-          </nav> <br/>
+    return (
+      <div className="app">
+        <BrowserRouter>
           <Switch>
-              <Route exact path='/create' component={ Create } />
-              <Route path='/edit/:id' component={ Edit } />
-              <Route path='/index' component={ Index } />
+            <Route
+              exact
+              path={"/"}
+              render={props => (
+                <Home
+                  {...props}
+                  handleLogin={this.handleLogin}
+                  handleLogout={this.handleLogout}
+                  loggedInStatus={this.state.loggedInStatus}
+                />
+              )}
+            />
+            <Route
+              exact
+              path={"/dashboard"}
+              render={props => (
+                <Dashboard
+                  {...props}
+                  loggedInStatus={this.state.loggedInStatus}
+                />
+              )}
+            />
           </Switch>
-        </div>
-      </Router>
+        </BrowserRouter>
+      </div>
     );
   }
 }
-
-export default App;

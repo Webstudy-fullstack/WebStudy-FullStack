@@ -4,6 +4,7 @@ var Post = require('../models/post')
 const statusCode = require('../modules/statusCode');
 const resMessage = require('../modules/responseMessage');
 const util = require('../modules/util');
+const { NULL_VALUE } = require('../modules/responseMessage');
 
 //글작성(C)
 router.post('/api',async(req,res)=>{

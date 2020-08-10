@@ -26,7 +26,7 @@ class TableRow extends Component {
             {this.props.obj.content}
           </td>
           <td>
-          <button className="btn btn-primary">Edit</button>
+            <Link to={`/edit/${this.props.obj.idx}`} className="btn btn-primary">Edit</Link>
           </td>
           <td>
             <button onClick={this.delete} className="btn btn-danger">Delete</button>

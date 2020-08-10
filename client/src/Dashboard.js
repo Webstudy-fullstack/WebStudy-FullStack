@@ -10,68 +10,10 @@ import Index from './components/index';
 
 
 class Dashboard extends Component {
-  constructor(props) {
-    super(props);
-    this.onChangePersonName = this.onChangePersonName.bind(this);
-    this.onChangeBusinessName = this.onChangeBusinessName.bind(this);
-    this.onChangeGstNumber = this.onChangeGstNumber.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-    this.state = {
-      host : '',
-      person_name: '',
-      title: '',
-      description:''
-    }
-  }
-
-
-  componentDidMount() {
-    this._getHost();
-  }
-  _getHost = async() => {
-    const res = await axios.get('/api/host');
-    this.setState({ host : res.data.host })
-  }
-
-  onChangePersonName(e) {
-    this.setState({
-      person_name: e.target.value
-    });
-  }
-  onChangeBusinessName(e) {
-    this.setState({
-      title: e.target.value
-    })  
-  }
-  onChangeGstNumber(e) {
-    this.setState({
-      description: e.target.value
-    })
-  }
-  onSubmit(e) {
-    e.preventDefault();
-    const obj = {
-      name: this.state.person_name,
-      title: this.state.title,
-      content: this.state.description
-    };
-
-    axios.post('http://localhost:4000/posts/api',obj).then(res=>console.log(res.data))
-
-    this.setState({
-      person_name: '',
-      title: '',
-      description: ''
-    })
-  }
-
-
-
   render() {
     return(
         <Router>
-                  <h3> Welcome to <u> {this.state.host} </u> Webstudy {this.title}</h3>
-                  <h2>Test {this.props.loggedInStatus}</h2>
+                  <h2>{this.props.loggedInStatus}</h2>
         <div className="container">
           <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <Link to={'/'} className="navbar-brand">WEB-STUDY</Link>

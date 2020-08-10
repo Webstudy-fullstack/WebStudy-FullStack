@@ -5,24 +5,23 @@ import axios from 'axios';
 export default class Edit extends Component {
   constructor(props) {
     super(props);
-    this.onChangePersonName = this.onChangePersonName.bind(this);
     this.onChangeBusinessName = this.onChangeBusinessName.bind(this);
     this.onChangeGstNumber = this.onChangeGstNumber.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
 
     this.state = {
-      idx:'',
-      person_name: '',
-      business_name: '',
-      business_gst_number:''
+      title: '',
+      content:''
     }
+
+
   }
 
   componentDidMount() {
-      axios.get('http://localhost:4000/posts/api/'+this.props.idx)
+
+      axios.get('http://localhost:4000/posts/api/'+this.props.match.params.id)
           .then(response => {
               this.setState({ 
-                idx: response.data.idx,
                 title: response.data.title,
                 content: response.data.content });
           })
@@ -31,30 +30,24 @@ export default class Edit extends Component {
           })
     }
 
-  onChangePersonName(e) {
-    this.setState({
-      person_name: e.target.value
-    });
-  }
   onChangeBusinessName(e) {
     this.setState({
-      business_name: e.target.value
+      title: e.target.value
     })  
   }
   onChangeGstNumber(e) {
     this.setState({
-      business_gst_number: e.target.value
+      content: e.target.value
     })
   }
 
   onSubmit(e) {
     e.preventDefault();
     const obj = {
-      idx: this.state.idx,
-      title: this.state.business_name,
-      content: this.state.business_gst_number
+      title: this.state.title,
+      content: this.state.content
     };
-    axios.put('http://localhost:4000/posts/api/'+this.props.match.params.idx, obj)
+    axios.put('http://localhost:4000/posts/api/'+this.props.match.params.id, obj)
         .then(res => console.log(res.data));
     
     this.props.history.push('/index');
@@ -69,7 +62,7 @@ export default class Edit extends Component {
                     <label>Title: </label>
                     <input type="text" 
                       className="form-control"
-                      value={this.state.business_name}
+                      value={this.state.title}
                       onChange={this.onChangeBusinessName}
                       />
                 </div>
@@ -77,7 +70,7 @@ export default class Edit extends Component {
                     <label>Content: </label>
                     <input type="text" 
                       className="form-control"
-                      value={this.state.business_gst_number}
+                      value={this.state.content}
                       onChange={this.onChangeGstNumber}
                       />
                 </div>

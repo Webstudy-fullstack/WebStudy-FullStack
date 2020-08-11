@@ -18,6 +18,7 @@ export default class Edit extends Component {
   }
 
   componentDidMount() {
+    console.log(this.props.match)
 
       axios.get('http://localhost:4000/posts/api/'+this.props.match.params.id)
           .then(response => {

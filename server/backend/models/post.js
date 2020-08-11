@@ -13,15 +13,14 @@ const post = {
 
         try {
             const result = await pool.queryParamArr(query, values);
-            console.log(result);
             const insertId = result.idx;
             return insertId;
         } catch (err) {
-            if (err == 1062) {
+            if (err.errno == 1062) {
                 console.log('post insert ERROR(duplicate) : ', err.errno, err.code);
                 return -1
             }
-            console.log('post insert ERROR : ', err);
+            console.log('post insert ERROR : ', err.errno);
             return -1
         }
     },
@@ -31,8 +30,7 @@ const post = {
 
         try {
             const result = await pool.queryParam(query);
-            if(result.length===0)
-            {
+            if(result.length === 0 ){
                 return NULL_VALUE
             }
             return result;

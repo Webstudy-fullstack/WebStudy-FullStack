@@ -1,18 +1,19 @@
 const pool = require('../modules/pool');
+const { NULL_VALUE } = require('../modules/responseMessage');
 const table = 'user';
 
 const user = {
 
-    signup: async (id, name, password, salt, email) => {
+    signup: async (name, password, salt, email) => {
 
-        const fields = 'id, name, password, salt, email';
-        const questions = `?, ?, ?, ?, ?`;
-        const values = [id, name, password, salt, email];
+        const fields = 'name, password, salt, email';
+        const questions = `? ,?, ?, ?`;
+        const values = [name, password, salt, email];
         const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
 
         try {
             const result = await pool.queryParamArr(query, values);
-            const insertId = result.id;
+            const insertId = result.insertId;
             return insertId;
         } catch (err) {
             if (err.errno == 1062) {
@@ -24,9 +25,9 @@ const user = {
         }
     },
 
-    checkUser: async (id) => {
+    checkUser: async (email) => {
 
-        const query = `SELECT * FROM ${table} WHERE id="${id}"`;
+        const query = `SELECT * FROM ${table} WHERE email="${email}"`;
 
         try {
             const result = await pool.queryParam(query);
@@ -45,12 +46,13 @@ const user = {
         }
     },
 
-    signin : async(id,password)=> {
-        const query = `SELECT * FROM ${table} WHERE id="${id}" AND password="${password}"`;
+    signin : async(email,password)=> {
+        const query = `SELECT * FROM ${table} WHERE email="${email}" AND password="${password}"`;
         try{
             const result = await pool.queryParam(query);
+            console.log(result)
             if(result.length === 0){
-                return true;
+                return NULL_VALUE;
             }else return false;
         }catch(err){
             if(err.errno == 1062){

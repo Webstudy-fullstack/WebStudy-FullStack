@@ -4,55 +4,67 @@ const User = require('../models/user')
 const statusCode = require('../modules/statusCode')
 const resMessage = require('../modules/responseMessage')
 const util = require('../modules/util')
+const Token = require('../modules/token')
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send(`Welcom to Sejun's blog`);
-  console.log("hihi")
+router.get('/', async function(req, res, next) {
+  if(await Token.checktoken(req.cookies.user)){
+    res.send("실패")
+    return
+  }
+  res.send("성공")
+  return
 });
 
-router.post('/signup', async(req,res)=>{
-  const { id, name, password, email } = req.body;
-  if(!id || !name || !password || !email){
+router.post('/registrations', async(req,res)=>{
+  const {name, password, email } = req.body;
+  if(!name || !password || !email){
+    console.log("1")
     res.status(statusCode.BAD_REQUEST)
     .send(util.fail(statusCode.BAD_REQUEST, resMessage.NULL_VALUE));
     return;
   }
 
   //사용중인 아이디가 있는지 확인 코드
-  if(await User.checkUser("user")){
+  if(await User.checkUser(email)){
+    console.log("2")
     res.status(statusCode.BAD_REQUEST)
-    .send(util.fail(statusCode.BAD_REQUEST, resMessage.ALREADY_ID));
+    .send(util.fail(statusCode.BAD_REQUEST, resMessage.ALREADY_EMAIL));
     return;
   }
-  console.log(">>> 2")
 
   const salt = 'dfw23EFVR3fefnd68FW3r4343';
-  //User.push({id, name, password, email});
-  const idx = await User.signup(id, name, password, salt, email);
+  const idx = await User.signup(name, password, salt, email);
+  console.log(idx)
   if (idx === -1){
+    console.log("3")
     return res.status(statusCode.DB_ERROR)
     .send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
   }
-  res.send(statusCode.OK)
-  .send(util.success(statusCode.OK, resMessage.CREATED_USER, {userId : idx}));
+  console.log("4")
+  res.status(statusCode.CREATED)
+  .send(util.success(statusCode.CREATED, resMessage.CREATED_USER, {userIdx : idx}));
 })
 
-router.post('/signin', async(req,res)=>{
-  const {id, password} = req.body;
-  if(!id || !password){
+
+router.post('/logged_in', async(req,res)=>{
+  const {email, password} = req.body;
+  if(!email || !password){
     res.status(statusCode.BAD_REQUEST)
     .send(util.fail(statusCode.BAD_REQUEST, resMessage.NULL_VALUE));
     return;
   }
 
-  if(User.signin(id, password)){
+  if(await User.signin(email, password)){
     res.status(statusCode.BAD_REQUEST)
     .send(util.fail(statusCode.BAD_REQUEST,resMessage.MISS_MATCH_PW));
     return; //나중에 로그인페이지 이동 예정
   }
-  res.send(statusCode.OK)
-  .send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS));
+
+  var token = await Token.createToken(email);
+  res.status(statusCode.OK)
+  .cookie("user",token)
+  .send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS,{logged_in:token, user:email}));
 })
 
 module.exports = router;

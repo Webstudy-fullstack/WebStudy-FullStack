@@ -1,76 +1,73 @@
-import React, { Component } from "react";
-import axios from "axios";
 
-export default class Login extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      email: "",
-      password: "",
-      loginErrors: ""
-    };
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(event) {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
-  }
-
-  handleSubmit(event) {
-    const { email, password } = this.state;
-
-    axios
-      .post(
-        "http://localhost:3001/sessions",
-        {
-          user: {
-            email: email,
-            password: password
-          }
-        },
-        { withCredentials: true }
-      )
-      .then(response => {
-        if (response.data.logged_in) {
-          this.props.handleSuccessfulAuth(response.data);
-        }
-      })
-      .catch(error => {
-        console.log("login error", error);
-      });
-    event.preventDefault();
-  }
-
-  render() {
-    return (
-      <div>
-        <form onSubmit={this.handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={this.state.email}
-            onChange={this.handleChange}
-            required
-          />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={this.state.password}
-            onChange={this.handleChange}
-            required
-          />
-
-          <button type="submit">Login</button>
-        </form>
-      </div>
-    );
-  }
+import React, { useState } from 'react';
+import { Link } from "react-router-dom";
+const Login = ({ setHasCookie }) => {
+const [ userId, setUserId ] = useState('');
+const [ userPw, setUserPw ] = useState('');
+const loginApi = (user) => {
+return fetch('http://localhost:4000/users/logged_in', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json'
+},
+body: JSON.stringify(user)
+}).then(response => response.json());
+};
+const handleSubmit = async (e) => {
+e.preventDefault();
+if (!userId || !userPw) {
+return;
 }
+try {
+const response = await loginApi({
+email: userId,
+password: userPw
+});
+if (response.result === 'ok') {
+setHasCookie(true);
+} else {
+throw new Error(response.error);
+}
+} catch (err) {
+alert('로그인에 실패했습니다.');
+setUserId('');
+setUserPw('');
+console.error('login error', err);
+}
+};
+return (
+<div>
+<h2>Login</h2>
+<form
+onSubmit={handleSubmit}
+>
+<input
+type="text"
+name="user_id"
+value={userId}
+onChange={e => setUserId(e.target.value)}
+placeholder="id"
+/>
+<input
+type="password"
+name="user_pw"
+value={userPw}
+onChange={e => setUserPw(e.target.value)}
+placeholder="pw"
+/>
+<button
+type="submit"
+>
+Login
+</button>
+</form>
+<Link
+to="/join"
+>
+회원가입
+</Link>
+</div>
+);
+};
+export default Login;
+

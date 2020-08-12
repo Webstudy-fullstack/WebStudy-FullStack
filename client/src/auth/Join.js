@@ -15,12 +15,12 @@ axios.post('http://localhost:4000/users/registrations',user).then(res => console
 const handleSubmit = async (e) => {
 e.preventDefault();
 try {
-const response = await createUserApi({
+const res = await createUserApi({
 email: userId,
 password: userPw,
 name: userName
 });
-if (response.result === 'ok') {
+if (res.result === 'ok') {
 setJoinSuccess(true);
 }
 } catch (err) {

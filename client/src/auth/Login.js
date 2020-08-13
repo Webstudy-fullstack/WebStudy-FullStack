@@ -1,34 +1,37 @@
 
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
+import axios from 'axios';
 const Login = ({ setHasCookie }) => {
 const [ userId, setUserId ] = useState('');
 const [ userPw, setUserPw ] = useState('');
-const loginApi = (user) => {
-return fetch('http://localhost:4000/users/logged_in', {
-method: 'POST',
-headers: {
-'Content-Type': 'application/json'
-},
-body: JSON.stringify(user)
-}).then(response => response.json());
-};
+
 const handleSubmit = async (e) => {
 e.preventDefault();
 if (!userId || !userPw) {
 return;
 }
 try {
-const response = await loginApi({
-email: userId,
-password: userPw
-});
-if (response.result === 'ok') {
+        let url='http://localhost:4000/users/logged_in';
+        let options = {
+            method: 'POST',
+            url: url,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
+            data: {
+                email: userId,
+                password: userPw
+            }
+        };
+        let response = await axios(options);
+        console.log(response.statusText);
+if (response.statusText === 'OK') {
 setHasCookie(true);
-} else {
-throw new Error(response.error);
+} 
 }
-} catch (err) {
+ catch (err) {
 alert('로그인에 실패했습니다.');
 setUserId('');
 setUserPw('');
@@ -42,7 +45,7 @@ return (
 onSubmit={handleSubmit}
 >
 <input
-type="text"
+type="email"
 name="user_id"
 value={userId}
 onChange={e => setUserId(e.target.value)}

@@ -7,7 +7,8 @@ const cors=require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var postsRouter = require('./routes/posts')
+var postsRouter = require('./routes/posts');
+//var chatRouter = require('./routes/chat');
 
 var app = express();
 
@@ -29,6 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/posts',postsRouter);
+//app.use('/chat',chatRouter);
 app.options('/write', (req, res) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -51,5 +53,25 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.io = require('socket.io')();
+
+var count =1;
+app.io.on('connection', function(socket){
+  console.log("a user connected : ",socket.id);
+  var name = "user"+ count++;
+
+  app.io.to(socket.id).emit('change name : ',name);
+
+  socket.on('disconnect',function(){
+    console.log('user disconnected : ', socket.id);
+  })
+
+  socket.on('send message',function(name, text){
+    var msg = name+' : '+text;
+    console.log(msg);
+    app.io.emit('receive message',msg);
+  })
+})
 
 module.exports = app;

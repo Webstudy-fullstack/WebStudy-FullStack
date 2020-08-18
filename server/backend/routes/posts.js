@@ -11,7 +11,7 @@ const { NULL_VALUE } = require('../modules/responseMessage');
 router.post('/api', async (req, res) => {
     try {
         console.log(req.cookies.user)
-        await Token.checktoken(req.cookies.user)
+        //await Token.checktoken(req.cookies.user)
         const { name, title, content } = req.body;
 
         const idx = await Post.insert(name, title, content)
@@ -31,7 +31,7 @@ router.post('/api', async (req, res) => {
 //selectAll(R)
 router.get('/api/', async (req, res) => {
     try {
-        await Token.checktoken(req.cookies.user);
+        //await Token.checktoken(req.cookies.user);
         const list = await Post.selectAll()
         if (list === -1) {
             return res.status(statusCode.DB_ERROR)
@@ -51,7 +51,7 @@ router.get('/api/', async (req, res) => {
 //selectOne(R)
 router.get('/api/:idx', async (req, res) => {
     try {
-        await Token.checktoken(req.cookies.user);
+        //await Token.checktoken(req.cookies.user);
 
         var contentId = req.params.idx;
         const list = await Post.selectOne(contentId)
@@ -73,7 +73,7 @@ router.get('/api/:idx', async (req, res) => {
 //update
 router.put('/api/:idx', async (req, res) => {
     try {
-        await Token.checktoken(req.cookies.user);
+        //await Token.checktoken(req.cookies.user);
 
         const contentIdx = req.params.idx
         const { title, content } = req.body
@@ -94,7 +94,7 @@ router.put('/api/:idx', async (req, res) => {
 
 router.delete('/api/:idx', async (req, res) => {
     try {
-        await Token.checktoken(req.cookies.user);
+        //await Token.checktoken(req.cookies.user);
 
         const contentIdx = req.params.idx
         const result = await Post.delete(contentIdx)

@@ -42,6 +42,7 @@ router.post('/registrations', async(req,res)=>{
     .send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
   }
   console.log("4")
+  console.log(statusCode.CREATED)
   res.status(statusCode.CREATED)
   .send(util.success(statusCode.CREATED, resMessage.CREATED_USER, {userIdx : idx}));
 })

@@ -8,7 +8,7 @@ const cors=require('cors');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var postsRouter = require('./routes/posts');
-var chatRouter = require('./routes/chat');
+//var chatRouter = require('./routes/chat');
 
 var app = express();
 
@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/posts',postsRouter);
-app.use('/chat',chatRouter);
+//app.use('/chat',chatRouter);
 app.options('/write', (req, res) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
